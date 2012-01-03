@@ -1,0 +1,8 @@
+﻿<Feature xmlns="http://schemas.microsoft.com/sharepoint/" Id="827D5007-3938-464f-9F6B-DAB8B1388059"
+          Description="Restricts the WebParts available in the Add Webpart Page" Hidden="false" Title="Restrict WebParts Feature"
+          Scope="Site">
+
+  <ElementManifests>
+    <ElementManifest Location="Elements.xml" />
+  </ElementManifests>
+</Feature>

@@ -238,7 +238,23 @@ namespace SPListDashboard
                 {
                     MainGrid.Columns.Add(CreateColumn(s));
                 }
+               
+
+                string firstGrouping = FirstGroupComboBox.SelectedValue as string;
+                string secondGrouping = SecondGroupComboBox.SelectedValue as string;
+
+                if (!string.IsNullOrEmpty(firstGrouping))
+                {
+                    data.GroupDescriptions.Add(new PropertyGroupDescription(firstGrouping));
+                }
+
+                if (!string.IsNullOrEmpty(secondGrouping))
+                {
+                    data.GroupDescriptions.Add(new PropertyGroupDescription(secondGrouping));
+                }
+
                 MainGrid.ItemsSource = data;
+
             }
             );
         }
