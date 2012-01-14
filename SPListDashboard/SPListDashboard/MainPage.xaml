@@ -3,17 +3,75 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" d:DesignHeight="630" d:DesignWidth="1207" xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk">
+    mc:Ignorable="d" d:DesignHeight="793" d:DesignWidth="1492" xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk" xmlns:local="clr-namespace:SPListDashboard">
 
-    <Grid x:Name="LayoutRoot" Background="White" Height="608" Width="1125">
-        <sdk:DataGrid AutoGenerateColumns="False" Height="477" HorizontalAlignment="Left" Margin="58,119,0,0" Name="MainGrid" VerticalAlignment="Top" Width="1030" />
-        <ComboBox Height="23" HorizontalAlignment="Left" Margin="58,40,0,0" Name="ListComboBox" VerticalAlignment="Top" Width="120" />
+    <UserControl.Resources>
+        <local:ColumnConverter x:Key="ColumnConverter" />
+        <local:RowIndexConverter x:Key="RowIndexConverter"/>
+    </UserControl.Resources>
+    
+    <Grid x:Name="LayoutRoot" Background="White" Height="777" Width="1430">
+        <sdk:DataGrid AutoGenerateColumns="False" Height="669" HorizontalAlignment="Left" Margin="12,108,0,0" Name="MainGrid" VerticalAlignment="Top" Width="1406" CanUserReorderColumns="True" CanUserResizeColumns="True" IsReadOnly="True" >
+            <sdk:DataGrid.Columns>
+                        <sdk:DataGridTextColumn Header="Requestor" CanUserSort="True" SortMemberPath="Requestor" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Requestor}" 
+                                          />
+
+                <sdk:DataGridTextColumn Header="Business Unit" CanUserSort="True" SortMemberPath="Business Unit" Binding="{Binding Path=BusinessUnit}" 
+                                          />
+
+                <sdk:DataGridTextColumn Header="Funding Source" CanUserSort="True" SortMemberPath="Funding Source" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Funding\ Source}" 
+                                         />
+
+                <sdk:DataGridTextColumn Header="Funding Available" CanUserSort="True" SortMemberPath="Funding Available" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Funding\ Available}" 
+                                         />
+
+
+                <sdk:DataGridTextColumn Header="Project Name" CanUserSort="True" SortMemberPath="Project Name" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Project\ Name}" 
+                                         />
+
+
+                <sdk:DataGridTextColumn Header="Intake Status" CanUserSort="True" SortMemberPath="Intake Status" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Intake\ Status}" 
+                                         />
+
+                <sdk:DataGridTextColumn Header="Type of Request" CanUserSort="True" SortMemberPath="Type of Request" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Type\ of\ Request}" 
+                                         />
+
+                <sdk:DataGridTextColumn Header="Date Recieved" CanUserSort="True" SortMemberPath="Date Recieved" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Date\ Recieved}" 
+                                         />
+
+
+                <sdk:DataGridTextColumn Header="Sizing Due By" CanUserSort="True" SortMemberPath="Sizing Due By" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Sizing\ Due\ By}" 
+                                         />
+
+                <sdk:DataGridTextColumn Header="Sizing details" CanUserSort="True" SortMemberPath="Sizing details" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Sizing\ details}" 
+                                         />
+
+                <sdk:DataGridTextColumn Header="Applications Impacted" CanUserSort="True" SortMemberPath="Applications Impacted" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Applications\ Impacted}"
+                                          />
+
+
+                <sdk:DataGridTextColumn Header="Market/Regions Impacted" CanUserSort="True" SortMemberPath="Market/Regions Impacted" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Market/Regions\ Impacted}"
+                                         />
+
+                <sdk:DataGridTextColumn Header="Request Status" CanUserSort="True" SortMemberPath="Request Status" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Request\ Status}"
+                                          />
+
+
+                <sdk:DataGridTextColumn Header="Week" CanUserSort="True" SortMemberPath="Week" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Week}"
+                                          />
+
+                <sdk:DataGridTextColumn Header="Sizing Contact" CanUserSort="True" SortMemberPath="Sizing Contact" Binding="{Binding Path=Data, Converter={StaticResource RowIndexConverter}, ConverterParameter=Sizing\ Contact}"
+                                         />
+
+            </sdk:DataGrid.Columns>
+        </sdk:DataGrid>
+        <ComboBox Height="23" HorizontalAlignment="Left" Margin="58,40,0,0" Name="ListComboBox" VerticalAlignment="Top" Width="120" SelectionChanged="ListComboBox_SelectionChanged_1" />
         <sdk:Label Height="28" HorizontalAlignment="Left" Margin="12,40,0,0" Name="label1" VerticalAlignment="Top" Width="120" Content="List" />
-        <sdk:Label Height="28" HorizontalAlignment="Left" Margin="204,40,0,0" Name="label2" VerticalAlignment="Top" Width="52" Content="First" />
-        <ComboBox Height="23" HorizontalAlignment="Left" Margin="257,40,0,0" Name="FirstGroupComboBox" VerticalAlignment="Top" Width="120" />
-        <ComboBox Height="23" HorizontalAlignment="Left" Margin="257,74,0,0" Name="SecondGroupComboBox" VerticalAlignment="Top" Width="120" />
-        <sdk:Label Height="28" HorizontalAlignment="Left" Margin="204,74,0,0" Name="label3" VerticalAlignment="Top" Width="47" Content="Second" />
-        <Button Content="Select Columns" Height="23" HorizontalAlignment="Left" Margin="434,40,0,0" Name="button1" VerticalAlignment="Top" Width="106" />
+        <sdk:Label Height="28" HorizontalAlignment="Left" Margin="204,40,0,0" Name="label2" VerticalAlignment="Top" Width="52" Content="Grouping" />
+        <ComboBox Height="23" HorizontalAlignment="Left" Margin="257,40,0,0"  Name="FirstGroupComboBox" VerticalAlignment="Top" Width="120" DisplayMemberPath="Header" SelectedValuePath="Header" SelectionChanged="FirstGroupComboBox_SelectionChanged" />
+        <Button Content="Clear Grouping" Height="23" HorizontalAlignment="Left" Margin="434,40,0,0" Name="button1" VerticalAlignment="Top" Width="106" Click="button1_Click" />
         <Button Content="Refresh" Height="23" HorizontalAlignment="Left" Margin="434,79,0,0" Name="button2" VerticalAlignment="Top" Width="75" Click="button2_Click" />
     </Grid>
+
+    
 </UserControl>

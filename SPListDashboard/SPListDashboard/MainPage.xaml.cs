@@ -16,6 +16,7 @@ using System.Xml.Linq;
 using System.Collections;
 using System.Windows.Data;
 using System.Diagnostics;
+using System.Collections.ObjectModel;
 
 
 namespace SPListDashboard
@@ -26,7 +27,9 @@ namespace SPListDashboard
         private RowIndexConverter _rowIndexConverter = new RowIndexConverter();
         Web site;
         List spList;
+        Dictionary<string, string> internalNames = new Dictionary<string, string>();
         ListItemCollection listItems;
+        PagedCollectionView data;
 
         public MainPage()
         {
@@ -99,25 +102,25 @@ namespace SPListDashboard
         //}
 
 
-        private DataGridColumn CreateColumn(string property)
-        {
-            return new DataGridTextColumn()
-            {
-                CanUserSort = true,
-                Header = property,
-                SortMemberPath = property,
-                IsReadOnly = true,
-                Binding = new Binding("Data")
-                {
-                    Converter = _rowIndexConverter as IValueConverter,
-                    ConverterParameter = property
-                }
-            };
-        }
+        //private DataGridColumn CreateColumn(string property)
+        //{
+        //    return new DataGridTextColumn()
+        //    {
+        //        CanUserSort = true,
+        //        Header = property,
+        //        SortMemberPath = property,
+        //        IsReadOnly = true,
+        //        Binding = new Binding("Data")
+        //        {
+        //            Converter = _rowIndexConverter as IValueConverter,
+        //            ConverterParameter = property                    
+        //        }
+        //    };
+        //}
 
         private void BindLists()
         {
-            ClientContext clientContext = new ClientContext("http://sp.madhurmoss.com");
+            ClientContext clientContext = Util.GetContext();
             Site siteCollection = clientContext.Site;
             site = clientContext.Web;
             clientContext.Load(site, s=>s.Lists);
@@ -153,50 +156,60 @@ namespace SPListDashboard
         private void BindColumns(string listName)
         {
             
-            ClientContext clientContext = new ClientContext("http://sp.madhurmoss.com");
-            //Site siteCollection = clientContext.Site;
-            Web site = clientContext.Web;
+            //ClientContext clientContext = new ClientContext("http://sp.madhurmoss.com");
+            ////Site siteCollection = clientContext.Site;
+            //Web site = clientContext.Web;
             
-            spList = site.Lists.GetByTitle(listName);
-            clientContext.Load(spList.Fields);
-            clientContext.ExecuteQueryAsync(ListSucceededCallback, webFailedCallback);
-         
+            //spList = site.Lists.GetByTitle(listName);
+            //clientContext.Load(spList.Fields);
+            //clientContext.ExecuteQueryAsync(ListSucceededCallback, webFailedCallback);
+
+            FirstGroupComboBox.ItemsSource = MainGrid.Columns;
 
            
         }
 
-        void ListSucceededCallback(object sender, ClientRequestSucceededEventArgs args)
-        {
-            List<string> spFields = new List<string>();
+        //void ListSucceededCallback(object sender, ClientRequestSucceededEventArgs args)
+        //{
+        //    List<string> spFields = new List<string>();
 
-            foreach (Field spField in spList.Fields)
-            {
-                spFields.Add(spField.Title);
-            }
-
-
-
-            Dispatcher.BeginInvoke(
-            delegate
-            {
-                FirstGroupComboBox.ItemsSource = spFields;
-                SecondGroupComboBox.ItemsSource = spFields;
-            }
-            );
+        //    foreach (Field spField in spList.Fields)
+        //    {
+        //        spFields.Add(spField.Title);
+        //    }
 
 
-        }
+
+        //    Dispatcher.BeginInvoke(
+        //    delegate
+        //    {
+        //        FirstGroupComboBox.ItemsSource = spFields;
+        //        SecondGroupComboBox.ItemsSource = spFields;
+        //    }
+        //    );
+
+
+        //}
 
         private void BindData()
         {
             string listName = ListComboBox.SelectedValue as string;
 
-            ClientContext clientContext = new ClientContext("http://sp.madhurmoss.com");
+            ClientContext clientContext = Util.GetContext();
             Web web = clientContext.Web;
             ListCollection spLists = web.Lists;
-            List spList = spLists.GetByTitle(listName);
+            spList = spLists.GetByTitle(listName);
             clientContext.Load(spList);
             clientContext.Load(spList.Fields);
+
+            //foreach (DataGridTextColumn dgc in MainGrid.Columns)
+            //{
+            //    string colName = dgc.Header as string;
+            //    Field fieldName = spList.Fields.GetByInternalNameOrTitle(colName);
+            //    clientContext.Load(fieldName, f => f.Title, f => f.InternalName);
+            //}
+
+         //   
             listItems = spList.GetItems(CamlQuery.CreateAllItemsQuery());
             clientContext.Load(listItems);
             //clientContext.Load(listItems, items => items.IncludeWithDefaultProperties(item => item.DisplayName));
@@ -204,65 +217,109 @@ namespace SPListDashboard
            
         }
 
+        
+
         private void GridSucceededCallback(object sender, ClientRequestSucceededEventArgs args)
         {
-            string[] disabledColumns={"Content Type ID", "Approver Comments"};
             List<string> colList = new List<string>();
 
-            SortableCollectionView data = new SortableCollectionView();
+            ObservableCollection<Row> rowsData = new ObservableCollection<Row>();
+            //SortableCollectionView data = new SortableCollectionView();
+
+         //   List<ListItem> lim = listItems.ToList();
+
+            foreach (Field field in spList.Fields)
+            {
+                try
+                {
+                    internalNames.Add(field.Title, field.InternalName);
+                }
+                catch (ArgumentException)
+                {
+                }
+            }
+            
             foreach (ListItem listItem in listItems)
             {
                 Row rowData = new Row();
 
-                foreach (Field spField in spList.Fields)
+                foreach (DataGridTextColumn textColumn in MainGrid.Columns)
                 {
-                    if (disabledColumns.Contains(spField.Title))
-                        continue;
                     try
                     {
-                        rowData[spField.Title] = listItem[spField.Title];
-                        colList.Add(spField.Title);
+                        string colName=textColumn.Header as string;
+                        string internalName = internalNames[colName];
+                        rowData[colName] = listItem[internalName];
                     }
                     catch (PropertyOrFieldNotInitializedException ex)
                     {
-                        Debug.WriteLine(spField.Title);
+                        Debug.WriteLine("test");
                     }
                 }
-                data.Add(rowData);
+                rowsData.Add(rowData);
             }
 
-            Dispatcher.BeginInvoke(
-            delegate
+            data = new PagedCollectionView(rowsData);
+
+
+          
+
+
+            if (data.Count > 0)
             {
-                foreach (string s in colList)
-                {
-                    MainGrid.Columns.Add(CreateColumn(s));
-                }
+
                
-
-                string firstGrouping = FirstGroupComboBox.SelectedValue as string;
-                string secondGrouping = SecondGroupComboBox.SelectedValue as string;
-
-                if (!string.IsNullOrEmpty(firstGrouping))
+                Dispatcher.BeginInvoke(
+                delegate
                 {
-                    data.GroupDescriptions.Add(new PropertyGroupDescription(firstGrouping));
+                    
+
+
+                    MainGrid.ItemsSource = data;
+                    
                 }
-
-                if (!string.IsNullOrEmpty(secondGrouping))
-                {
-                    data.GroupDescriptions.Add(new PropertyGroupDescription(secondGrouping));
-                }
-
-                MainGrid.ItemsSource = data;
-
+                );
             }
-            );
         }
 
         private void button2_Click(object sender, RoutedEventArgs e)
         {
             BindData();
 
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            //string listName = ListComboBox.SelectedValue as string;
+            //SPListColumns listColumns = new SPListColumns(listName,MainGrid);
+            //listColumns.Closed += new EventHandler(listColumns_Closed);
+            //listColumns.Show();
+
+            data.GroupDescriptions.Clear();
+        }
+
+        void listColumns_Closed(object sender, EventArgs e)
+        {
+            //throw new NotImplementedException();
+        }
+
+        private void FirstGroupComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string firstGrouping = FirstGroupComboBox.SelectedValue as string;
+            firstGrouping = firstGrouping.Replace(" ", string.Empty);
+            if (!string.IsNullOrEmpty(firstGrouping))
+            {
+                data.GroupDescriptions.Add(new PropertyGroupDescription(firstGrouping));
+            }
+
+            data.Refresh();
+            MainGrid.ItemsSource = data;
+            
+        }
+
+        private void ListComboBox_SelectionChanged_1(object sender, SelectionChangedEventArgs e)
+        {
+            BindData();
         }
     }
 }

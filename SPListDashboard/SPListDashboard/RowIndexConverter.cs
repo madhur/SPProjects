@@ -11,13 +11,17 @@ using System.Windows.Shapes;
 using System.Windows.Data;
 using System.Collections.Generic;
 using System.Globalization;
+using Microsoft.SharePoint.Client;
+using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace SPListDashboard
 {
     public class RowIndexConverter : IValueConverter
     {
         private IValueConverter _valueConverter;
-
+        string userVal;
+        User user;
         /// <summary>
         /// A value converter for formatting this value
         /// </summary>
@@ -38,6 +42,15 @@ namespace SPListDashboard
             string index = parameter as string;
             object propertyValue = row[index];
 
+            if (propertyValue is Microsoft.SharePoint.Client.FieldUserValue)
+            {
+                FieldUserValue fuv = propertyValue as FieldUserValue;
+
+              
+                return fuv.LookupValue;
+
+            }
+
             // convert if required
             if (_valueConverter != null)
             {
@@ -46,6 +59,7 @@ namespace SPListDashboard
 
             return propertyValue;
         }
+
 
         public object ConvertBack(object value, Type targetType,
             object parameter, CultureInfo culture)

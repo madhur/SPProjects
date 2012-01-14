@@ -29,6 +29,13 @@ namespace SPListDashboard
 
         private bool _suppressCollectionChanged = false;
 
+        private ObservableCollection<GroupDescription> _groupBy;
+        private ReadOnlyObservableCollection<object> _itemsRO;
+        private ObservableCollection<object> _itemsRW;
+
+
+
+
         private object _currentItem;
 
         private CultureInfo _culture;
@@ -42,6 +49,13 @@ namespace SPListDashboard
         {
             this._currentItem = null;
             this._currentPosition = -1;
+
+       //     this._itemsRW = new ObservableCollection<object>();
+
+         //   this._itemsRO = new ReadOnlyObservableCollection<object>(this._itemsRW);
+
+            this._groupBy = new ObservableCollection<GroupDescription>();
+
         }
 
 
@@ -85,12 +99,12 @@ namespace SPListDashboard
 
         public bool CanGroup
         {
-            get { return false; }
+            get { return true; }
         }
 
         public bool CanSort
         {
-            get { return true; }
+            get { return false; }
         }
 
         public bool Contains(object item)
@@ -153,7 +167,8 @@ namespace SPListDashboard
         {
             get
             {
-                throw new NotImplementedException();
+                return _groupBy;
+                //throw new NotImplementedException();
             }
         }
 
@@ -161,8 +176,11 @@ namespace SPListDashboard
         {
             get
             {
-                return new ReadOnlyObservableCollection<object>(
-                    new ObservableCollection<object>());
+                _itemsRW = new ObservableCollection<object>(GroupDescriptions.Cast<object>());
+
+                this._itemsRO = new ReadOnlyObservableCollection<object>(this._itemsRW);
+                return _itemsRO;
+
             }
 
         }
@@ -449,21 +467,8 @@ namespace SPListDashboard
     }
 
  
+ 
 
 
-    public class CustomSortDescriptionCollection : SortDescriptionCollection
-    {
-
-        public event NotifyCollectionChangedEventHandler MyCollectionChanged
-        {
-            add
-            {
-                this.CollectionChanged += value;
-            }
-            remove
-            {
-                this.CollectionChanged -= value;
-            }
-        }
-    }
+   
 }
