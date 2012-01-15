@@ -53,8 +53,8 @@ namespace SPInfoPathList
                 WebClient wc = new WebClient();
                 wc.DownloadStringCompleted += HttpsCompleted;
 
-                wc.DownloadStringAsync(new Uri("http://sp.madhurmoss.com"+filePath));
-                //wc.DownloadStringAsync(new Uri(filePath, UriKind.Relative));
+               // wc.DownloadStringAsync(new Uri("http://sp.madhurmoss.com"+filePath));
+                wc.DownloadStringAsync(new Uri(filePath, UriKind.Relative));
 
 
             }
