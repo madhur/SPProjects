@@ -19,7 +19,7 @@ namespace SPInfoPathList
             if (ClientContext.Current != null)
                 return ClientContext.Current;
             else
-                return new ClientContext("http://sp.madhurmoss.com/sites/nishantverma/portfolios");
+                return new ClientContext("https://teams.aexp.com/sites/nishantverma/portfolios");
 
         }
 
