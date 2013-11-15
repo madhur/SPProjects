@@ -1,9 +1,0 @@
-﻿<Elements xmlns="http://schemas.microsoft.com/sharepoint/" Id="8DEECDF8-5FB4-4c1c-B296-2C1F8F932B8C">
-  <CustomAction Title="Restrict WebParts" Description="Restricts the available WebParts on Add WebPart page"
-                  Location="Microsoft.SharePoint.SiteSettings" GroupId="SiteCollectionAdmin">
-    <UrlAction Url="~/_layouts/RestrictWp.aspx"/>
-  </CustomAction>
-
-
-
-</Elements>
