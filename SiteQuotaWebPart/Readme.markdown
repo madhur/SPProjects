@@ -1,4 +1,3 @@
-
 <div class="thumbnail">
 <a  href="https://raw.github.com/madhur/SPProjects/gh-pages/screenshots/sitequota.jpg" title="Site Quota WebPart"><img  src='https://raw.github.com/madhur/SPProjects/gh-pages/screenshots/sitequota.jpg' /></a>
 </div>  
